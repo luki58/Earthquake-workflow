@@ -1,0 +1,14 @@
+fake_undistor            1
+Initial distorsion index 1.1867931065e+03
+Final distorsion index   7.2501750999e+02
+Index gain (>1 is good)  1.6369164747e+00
+xc_corrDistor            5.8198109415e+02
+yc_corrDistor            3.2070899621e+02
+K1_corrDistor            1.2596730307e-09
+K2_corrDistor            -2.9873061274e-14
+K3_corrDistor            3.5578297526e-20
+P1_corrDistor            6.9227912385e-07
+P2_corrDistor            3.2564489056e-07
+P3_corrDistor            1.2641687235e-06
+xerrormax                2.6798458137e+00
+yerrormax                1.4383437978e+00

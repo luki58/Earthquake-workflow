@@ -1,0 +1,29 @@
+! The path to the image file (without spaces)
+image_name ../1-raw_data/frame_00000.tif
+
+! Minimum and maximum radii in pixel-units
+Rmin  12
+Rmax  21
+
+! Number of smothing passes
+nsmooth  1
+
+! Coordinates of the four corners
+! T=top, B=bottom, L=left, R=right 
+zone.xTL  30
+zone.yTL  65
+zone.xTR  1280
+zone.yTR  65
+zone.xBR  1280
+zone.yBR  225
+zone.xBL  30
+zone.yBL  225
+
+! Radius of the rounded parts in the corners of 1g2e frame
+zone.Rcorners  1
+
+! Gray level threshold for the segmentation.
+! To find it in histo.txt, this should correspond to the start of the right 'peak'
+! that is the peak of grain's gray levels (threshold in 16-bit)
+threshold  9000
+	

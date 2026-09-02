@@ -1,0 +1,39 @@
+! This is a command file for tracker3
+! Lab 3SR, February 2013
+! Gael.Combe@ujf-grenoble.fr, Vincent.Richefeu@ujf-grenoble.fr
+
+
+!=========================================================================================
+!
+! define what kind of computation
+!
+
+procedure find_subpixel_centers
+
+
+
+!=========================================================================================
+!
+! for parallel computing
+!
+
+wanted_num_threads       1 ! 48 max
+
+
+!=========================================================================================
+!
+! The path (relative or not) of image files. The number is set in a c-style
+!
+
+image_name ../1-raw_data/frame_00000.tif
+iref 0
+
+grains_to_follow ../2-find_grains/grains.txt
+
+subpix_center_threshold   38.5
+pattern circ 10
+subpix_center_dr0         5.0
+subpix_center_xstep       0.1
+subpix_center_ystep       0.1
+subpix_center_rstep       0.1
+subpix_tol 		  1e-6

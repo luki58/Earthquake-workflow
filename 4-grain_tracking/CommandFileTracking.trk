@@ -1,0 +1,165 @@
+! This is a command file for tracker3
+! Lab 3SR, February 2013
+! Gael.Combe@ujf-grenoble.fr, Vincent.Richefeu@ujf-grenoble.fr
+
+!=========================================================================================
+! 
+! define what kind of computation
+!
+
+procedure particle_tracking
+
+!=========================================================================================
+!
+! for parallel computing
+!
+
+wanted_num_threads    2 ! 48 max
+
+
+!=========================================================================================
+!
+! The path (relative or not) of image files. The number is set in a c-style
+!
+
+image_name ../1-raw_data/frame_%05d.tif
+
+
+!=========================================================================================
+! Points to follow
+!
+! 3 possibles cases : 
+!
+!   i) user define points in a file
+!  ii) automatic generation of points (grid)
+! iii) points from a previous correlation - re-start procedure
+!
+!
+
+! ====== case i)
+! The path (relative or not) of the file with the following content:
+!
+! l1 -> number_of_grains
+! l2 ... ln -> [ refcoordx(pixel,integer) refcoordy(pixel,integer) refrot(radian,real) radius(pixel,integer) ]
+!
+
+grains_to_follow ../3-find_grains_subpixel/recentered.data
+
+! To reorder the grains, use the command 'reordering' followed by the keyword 
+! 'increasingRadius', 'decreasingRadius', 'increasingHeight' or 'mixed'.
+! A new file input file will be created, and the program will stop
+!reordering decreasingRadius
+ 
+ 
+! ====== case ii)
+! -> rectangular grid
+! make_grid xmin xmax ymin ymax nx ny alea
+! make_grid 100  1000 100  1000 10 10 5 !a grid of 10 x 10 points
+! -> circular grid
+! make_grid_circular 	x_center	y_center	Radius	Angle_Increment
+! make_grid_circular	512	512	300	0.025
+ 
+ 
+! ====== case iii)
+! restart_file ./dic_out_290.txt ! restart = ibeg - 1
+
+
+!=========================================================================================
+!
+! Image flow
+!
+
+iref                     0    ! Reference image
+ibeg                     0    ! Number of the first image
+iend                     2271  ! Number of the last image
+iinc                     1    ! Increment between the images processed
+iraz                     20000! NOT YET TESTED. Impose iraz > iend
+
+
+
+!=========================================================================================
+!
+! DIC tacking (or not tacking) with taking into account grain rotation
+!
+
+rotations    1         ! 1 for yes, 0 for no
+
+
+!=========================================================================================
+!
+! subpixel parameters
+!
+
+subpixel     1            ! 1 for subpixel computation, 0 for pixel computation
+!interp_mask_size 16       ! (DEPRECATED) half size of a squared pattern
+subpix_tol   1.e-8        ! tolerance criteria for powell minimisation (1.e-8 is good)
+initial_direction_dx 0.01 ! initial value for powell minimisation, X translation
+initial_direction_dy 0.01 ! initial value for powell minimisation, Y translation
+initial_direction_dr 0.01 ! initial value for powell minimisation, alpha rotation
+image_interpolator cubic ! linear, cubic or quintic
+
+overflow_stiffness 0.0 ! This parameter tune the 'force' that limit the maximum displacement variation allowed for subpixel  
+subpix_displacement_max 3.0 ! Maximum displacement variation allowed for subpixel
+
+
+
+
+!=========================================================================================
+!
+! rescue level and neighbour detection
+!
+
+rescue_level 0          ! 2 for super_rescue, 1 for rescue only and 0 for no rescue
+use_neighbour_list 0    ! 1 for yes, 0 for no
+
+!==========
+!
+! Search zone for the first attempt (without sub-pixel) 
+!
+search_zone.left         3    ! 
+search_zone.right        3    !
+search_zone.up           3    !
+search_zone.down         3    !
+search_zone.inc_rot      0.0454  ! Radians
+search_zone.num_rot      3    ! 
+
+!==========
+!
+! Search zone for the grain rescue (without sub-pixel) 
+!
+NCC_min                         0.85  !
+search_zone_rescue.left         20   !
+search_zone_rescue.right        20   !
+search_zone_rescue.up           20   !
+search_zone_rescue.down         20   !
+search_zone_rescue.inc_rot      0.0454 ! Radians
+search_zone_rescue.num_rot      10  !
+
+!==========
+!
+! Search zone for the grain super rescue (without sub-pixel) 
+!
+NCC_min_super                         0.7  !
+search_zone_super_rescue.left         200   !
+search_zone_super_rescue.right        200   !
+search_zone_super_rescue.up           200   !
+search_zone_super_rescue.down         200   !
+search_zone_super_rescue.inc_rot      0.045  ! Radians
+search_zone_super_rescue.num_rot      69    !
+
+
+
+
+!=========================================================================================
+!
+! Shape of the pattern to be correlated
+!
+! pattern  rect 10 10 
+! pattern file ../Pattern.data
+! pattern ring 15 25, pattern targetpattern 0.9 4
+
+  pattern grain_diameter 0.9 12 ! Pattern en forme de disque. Rayon = entier en pixels
+
+
+!=========================================================================================
+
