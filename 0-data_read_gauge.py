@@ -31,7 +31,7 @@ except:
 
 # LOCATION of the EVENT of interest
 loc_folder = os.path.abspath(os.path.join(base_dir, "..", "gauge_dat"))
-loc_file = r"event-004.npy"
+loc_file = r"event-002.npy"
 
 # name of the reference file, containing unloaded signal, usually event-001
 loc_file_zero = r"event-001.npy"
@@ -134,22 +134,45 @@ if not 0:
         gages_sm[3*i+1] = ch_2
         gages_sm[3*i+2] = ch_3
 
-    eps_yy_sm = gages_sm[1::3]
-    eps_xy_sm = gages_sm[2::3]
-    eps_xx_sm = gages_sm[0::3]
-
     forces = voltage_to_force(forces)
     forces_sm = voltage_to_force(forces_sm)
     fn_sm = voltage_to_force(fn_sm)
     fs_sm = voltage_to_force(fs_sm)
 
+    s1_sm = gages_sm[0::3]
+    s1_sm[10:] = np.flip(s1_sm[10:,:],axis=0)
+    s2_sm = gages_sm[1::3]
+    s2_sm[10:] = np.flip(s2_sm[10:,:],axis=0)
+    s3_sm = gages_sm[2::3]
+    s3_sm[10:] = np.flip(s3_sm[10:,:],axis=0)
+    
+    eps_yy_sm = s2_sm
+    # Implement s1 - s3 for front and s3 - s1 for back
+    eps_xy_sm = []
+    for i in range(s1_sm.shape[0]):
+        if i < 10:
+            eps_xy_sm.append(0.5 * (s1_sm[i, :] - s3_sm[i, :]))
+        else:
+            eps_xy_sm.append(0.5 * (s3_sm[i, :] - s1_sm[i, :]))
+    eps_xy_sm = np.array(eps_xy_sm)
+    eps_xx_sm = (s1_sm + s3_sm) - s2_sm
+    
     s1 = gages[0::3]
+    s1[10:] = np.flip(s1[10:,:],axis=0)
     s2 = gages[1::3]
+    s2[10:] = np.flip(s2[10:,:],axis=0)
     s3 = gages[2::3]
-
+    s3[10:] = np.flip(s3[10:,:],axis=0)
+    
     eps_yy = s2
-    eps_xy = 0.5 * (s1 - s3)
-    eps_xx = s1 + s3 - s2
+    eps_xy = []
+    for i in range(s1.shape[0]):
+        if i < 10:
+            eps_xy.append(0.5 * (s1[i, :] - s3[i, :]))
+        else:
+            eps_xy.append(0.5 * (s3[i, :] - s1[i, :]))
+    eps_xy = np.array(eps_xy)
+    eps_xx = (s1 + s3) - s2
 
 # %% ### save data
 
@@ -374,7 +397,7 @@ plt.tight_layout()
 plt.savefig(os.path.abspath(os.path.join(daq_path, "gauge(t)_event"+ str(loc_file[7:9]) +"_overview.png")))
 plt.show()
 
-# %% ### Strain sensors overt time
+# %% ### Strain sensors overt time focused on each event isolated 
 
 # Time axis (4 MHz)
 fs = sampling_freq_in
